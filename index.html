@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>北京之行 · 出行意向问卷</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    color: white;
+    padding: 40px 20px 30px;
+  }
+  .header h1 {
+    font-size: 2em;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .header p {
+    font-size: 1.05em;
+    opacity: 0.9;
+  }
+
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  }
+
+  .card h2 {
+    font-size: 1.25em;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #667eea;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+  .form-group:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 10px;
+    font-size: 1.02em;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .option-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+  .option-btn input { display: none; }
+  .option-btn label {
+    display: block;
+    text-align: center;
+    padding: 12px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.2s;
+    margin: 0;
+    font-size: 0.95em;
+  }
+  .option-btn input:checked + label {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+  }
+  .option-btn label:hover {
+    border-color: #667eea;
+    background: #f0f0ff;
+  }
+  .option-btn input:checked + label:hover {
+    background: #667eea;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+
+  .reference-box {
+    background: #f8f9ff;
+    border: 1px solid #e0e3ff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .reference-box h3 {
+    font-size: 1em;
+    color: #667eea;
+    margin-bottom: 14px;
+  }
+
+  .ref-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 500px) {
+    .ref-grid { grid-template-columns: 1fr; }
+  }
+
+  .ref-col h4 {
+    font-size: 0.95em;
+    color: #555;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px dashed #d0d0ff;
+  }
+
+  .ref-list {
+    list-style: none;
+    font-size: 0.9em;
+    color: #666;
+    line-height: 1.9;
+  }
+  .ref-list li::before {
+    content: "▸ ";
+    color: #667eea;
+    font-size: 0.8em;
+  }
+  .ref-list li span {
+    color: #999;
+    font-size: 0.85em;
+  }
+
+  .submit-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.15em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 6px 20px rgba(102,126,234,0.35);
+  }
+  .submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.45);
+  }
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+  .submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .success-msg .icon {
+    font-size: 3em;
+    margin-bottom: 16px;
+  }
+  .success-msg h2 {
+    color: #333;
+    margin-bottom: 10px;
+    border: none;
+  }
+  .success-msg p { color: #666; }
+
+  .footer {
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85em;
+    padding: 10px 0 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🏯 北京之行 · 出行意向问卷</h1>
+    <p>请各位家人填写，方便我们统一安排行程 ~</p>
+  </div>
+
+  <form id="surveyForm" action="https://formspree.io/f/mqkrwldb" method="POST">
+    <!-- Q1: 出发日期 -->
+    <div class="card">
+      <h2>📅 1. 选择出发日期</h2>
+      <div class="form-group">
+        <label>请选择您希望出发的日期（单选）：</label>
+        <div class="options">
+          <div class="option-btn"><input type="radio" name="出发日期" value="6月1日" id="d1" required><label for="d1">6月1日<br>周日</label></div>
+          <div class="option-btn"><input type="radio" name="出发日期" value="6月2日" id="d2"><label for="d2">6月2日<br>周一</label></div>
+          <div class="option-btn"><input type="radio" name="出发日期" value="6月3日" id="d3"><label for="d3">6月3日<br>周二</label></div>
+          <div class="option-btn"><input type="radio" name="出发日期" value="6月4日" id="d4"><label for="d4">6月4日<br>周三</label></div>
+          <div class="option-btn"><input type="radio" name="出发日期" value="6月5日" id="d5"><label for="d5">6月5日<br>周四</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2: 出发时段 -->
+    <div class="card">
+      <h2>⏰ 2. 出发时段偏好</h2>
+      <div class="form-group">
+        <label>您想在哪段时间出发？（单选）：</label>
+        <div class="options">
+          <div class="option-btn"><input type="radio" name="出发时段" value="上午 6:00-12:00" id="t1" required><label for="t1">🌅 上午<br>6:00-12:00</label></div>
+          <div class="option-btn"><input type="radio" name="出发时段" value="中午 12:00-14:00" id="t2"><label for="t2">☀️ 中午<br>12:00-14:00</label></div>
+          <div class="option-btn"><input type="radio" name="出发时段" value="下午 14:00-18:00" id="t3"><label for="t3">🌤 下午<br>14:00-18:00</label></div>
+          <div class="option-btn"><input type="radio" name="出发时段" value="晚上 18:00-24:00" id="t4"><label for="t4">🌙 晚上<br>18:00以后</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3: 出行方式 -->
+    <div class="card">
+      <h2>🚄 3. 出行方式</h2>
+      <div class="form-group">
+        <label>您倾向哪种交通方式？（单选）：</label>
+        <div class="options">
+          <div class="option-btn"><input type="radio" name="出行方式" value="高铁/动车" id="m1" required><label for="m1">🚄 高铁/动车</label></div>
+          <div class="option-btn"><input type="radio" name="出行方式" value="飞机" id="m2"><label for="m2">✈️ 飞机</label></div>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding:10px 14px; background:#fffbe6; border-radius:8px; font-size:0.88em; color:#8a6d14;">
+        💡 <strong>参考：</strong>广元/成都出发动车约7-10小时，飞机约2.5小时；深圳/广州/珠海出发动车约8-11小时，飞机约3小时。
+      </div>
+    </div>
+
+    <!-- Q4: 出发城市 -->
+    <div class="card">
+      <h2>📍 4. 出发城市</h2>
+      <div class="form-group">
+        <label>您从哪个城市出发？（单选）：</label>
+        <div class="options">
+          <div class="option-btn"><input type="radio" name="出发城市" value="广元" id="c1" required><label for="c1">🏔 广元</label></div>
+          <div class="option-btn"><input type="radio" name="出发城市" value="成都" id="c2"><label for="c2">🐼 成都</label></div>
+          <div class="option-btn"><input type="radio" name="出发城市" value="深圳" id="c3"><label for="c3">🏙 深圳</label></div>
+          <div class="option-btn"><input type="radio" name="出发城市" value="珠海" id="c4"><label for="c4">🌊 珠海</label></div>
+          <div class="option-btn"><input type="radio" name="出发城市" value="广州" id="c5"><label for="c5">🌆 广州</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5: 想去的景点和美食 -->
+    <div class="card">
+      <h2>🎯 5. 在北京想去的地方 & 想吃的美食</h2>
+
+      <!-- 参考资料 -->
+      <div class="reference-box">
+        <h3>📖 北京热门参考（点击看看想去哪些~）</h3>
+        <div class="ref-grid">
+          <div class="ref-col">
+            <h4>🏛 经典必去景点</h4>
+            <ul class="ref-list">
+              <li>故宫 <span>— 明清皇宫，建议提前7天预约</span></li>
+              <li>天安门广场 <span>— 看升旗仪式（需早起）</span></li>
+              <li>八达岭长城 <span>— "不到长城非好汉"</span></li>
+              <li>慕田峪长城 <span>— 人少景美，有滑道下山</span></li>
+              <li>颐和园 <span>— 皇家园林，昆明湖划船</span></li>
+              <li>天坛 <span>— 祈年殿标志性建筑</span></li>
+              <li>恭王府 <span>— 和珅旧宅，摸福字碑</span></li>
+              <li>雍和宫 <span>— 北京最大藏传佛教寺院</span></li>
+            </ul>
+          </div>
+          <div class="ref-col">
+            <h4>🎨 文艺 & 潮流</h4>
+            <ul class="ref-list">
+              <li>南锣鼓巷 <span>— 老胡同+文创小店</span></li>
+              <li>798艺术区 <span>— 当代艺术画廊展览</span></li>
+              <li>后海 / 什刹海 <span>— 酒吧街+夜景散步</span></li>
+              <li>五道营胡同 <span>— 小众咖啡馆聚集</span></li>
+              <li>国家博物馆 <span>— 镇馆之宝无数，需预约</span></li>
+              <li>环球影城 <span>— 哈利波特、变形金刚主题</span></li>
+              <li>鸟巢 / 水立方 <span>— 奥运地标夜景</span></li>
+              <li>三里屯 <span>— 潮流购物+餐厅酒吧</span></li>
+            </ul>
+          </div>
+          <div class="ref-col">
+            <h4>🍗 必吃美食</h4>
+            <ul class="ref-list">
+              <li>北京烤鸭 <span>— 全聚德/便宜坊/大董/四季民福</span></li>
+              <li>涮羊肉 <span>— 东来顺/聚宝源，铜锅炭火</span></li>
+              <li>炸酱面 <span>— 海碗居/老北京炸酱面馆</span></li>
+              <li>炒肝 + 包子 <span>— 姚记炒肝（鼓楼旁）</span></li>
+              <li>卤煮火烧 <span>— 小肠陈/门框胡同</span></li>
+              <li>爆肚 <span>— 爆肚冯/金生隆</span></li>
+              <li>豆汁儿 + 焦圈 <span>— 老磁器口豆汁店（慎入！）</span></li>
+            </ul>
+          </div>
+          <div class="ref-col">
+            <h4>🍡 小吃 & 甜品</h4>
+            <ul class="ref-list">
+              <li>糖葫芦 <span>— 冬天街头随处可见</span></li>
+              <li>驴打滚 <span>— 糯米豆沙，软糯香甜</span></li>
+              <li>艾窝窝 <span>— 糯米包芝麻糖馅</span></li>
+              <li>门钉肉饼 <span>— 皮薄肉厚，汁多</span></li>
+              <li>老北京酸奶 <span>— 瓷罐装，街头小卖部有售</span></li>
+              <li>豌豆黄 <span>— 清凉细腻的豌豆糕</span></li>
+              <li>炸灌肠 <span>— 蘸蒜汁吃，外焦里嫩</span></li>
+              <li>冰糖葫芦冰淇淋 <span>— 南锣鼓巷网红款</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>请填写您特别想去的地方 & 特别想吃的美食（也可以写上面没有提到的）：</label>
+        <textarea name="想去的地方和美食" placeholder="例如：&#10;想去：故宫、长城、798艺术区&#10;想吃：北京烤鸭（全聚德）、涮羊肉（东来顺）、炸酱面&#10;其他想法：想体验一下胡同文化，坐黄包车逛后海..."></textarea>
+      </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <button type="submit" class="submit-btn" id="submitBtn">✅ 提交问卷</button>
+
+    <!-- 成功提示 -->
+    <div class="success-msg card" id="successMsg">
+      <div class="icon">🎉</div>
+      <h2>提交成功！</h2>
+      <p>感谢填写，已收到您的出行偏好~</p>
+    </div>
+  </form>
+
+  <div class="footer">
+    问卷数据仅供家人出行安排使用 · 提交后可联系发起人修改
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('surveyForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const successMsg = document.getElementById('successMsg');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = '提交中...';
+
+    const formData = new FormData(form);
+    try {
+      const resp = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (resp.ok) {
+        form.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+        submitBtn.style.display = 'none';
+        successMsg.style.display = 'block';
+      } else {
+        throw new Error('提交失败');
+      }
+    } catch (err) {
+      alert('提交失败，请检查网络后重试，或直接联系发起人微信告知。');
+      submitBtn.disabled = false;
+      submitBtn.textContent = '✅ 提交问卷';
+    }
+  });
+</script>
+
+</body>
+</html>
